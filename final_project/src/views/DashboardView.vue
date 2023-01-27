@@ -1,10 +1,12 @@
 <template>
-    <div>
-        Dashboard
-    </div>
+  <Navbar></Navbar>
+  <router-view />
 </template>
 
 <script>
+// 把元件Navbar載入專案
+import Navbar from '../components/NavbarComponents.vue';
+
 export default {
   created() {
     // 取出Token，並將Token加入headers中
@@ -16,9 +18,13 @@ export default {
     this.$http.post(api, this.user).then((res) => {
       // 如果res.data.success不等於true，則代表尚未登入，轉移至登入畫面
       if (res.data.success !== true) {
-        this.$router.push('login');
+        this.$router.push('/login');
       }
     });
+  },
+  components: {
+    // 元件Navbar
+    Navbar,
   },
 };
 </script>
