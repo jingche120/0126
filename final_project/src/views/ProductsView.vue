@@ -1,4 +1,10 @@
 <template>
+  <div class="text-end">
+    <!-- 因為是呼叫函式，所以要有() -->
+    <button class="btn btn-primary" type="button" @click="openModal">
+      增加一個產品
+    </button>
+  </div>
   <table class="table mt-4">
     <thead>
       <tr>
@@ -35,14 +41,24 @@
       </tr>
     </tbody>
   </table>
+<!-- ref=productModal，讓這個ProductModal可以被別人呼叫
+:product="temProduct" [往內層傳送]前(內)層(props中的變數名稱)內後(此)外(ProductsView此層的變數)
+@update-product="updateProduct" [往內層向外傳送]前(內)層($emit的變數名稱)內後外(要觸發此層的哪個函式)
+-->
+<ProductModal ref="productModal"
+  :product="tempProduct"
+  @update-product="updateProduct"></ProductModal>
 </template>
 
 <script>
+import ProductModal from '../components/ProductModal.vue';
+
 export default {
   data() {
     return {
       products: [], // 所有產列表
       pagination: {}, // 換頁時所要的產品資料
+      tempProduct: {}, // 要傳送到內層(ProductModal)的產品資料
     };
   },
   methods: {
@@ -55,9 +71,27 @@ export default {
         this.pagination = res.data.pagination;
       });
     },
+    updateProduct(item) {
+      this.tempProduct = item;
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
+      const productComponent = this.$refs.productModal;
+      this.$http.post(api, { data: this.tempProduct }).then((response) => {
+        console.log(response);
+        productComponent.hideModal();
+        this.getProducts();
+      });
+    },
+    openModal() {
+      this.tempProduct = {};
+      const productComponent = this.$refs.productModal;
+      productComponent.showModal();
+    },
   },
   created() {
     this.getProducts();
+  },
+  components: {
+    ProductModal,
   },
 };
 </script>
