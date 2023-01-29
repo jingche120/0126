@@ -1,6 +1,9 @@
 <template>
   <Navbar></Navbar>
-  <router-view />
+  <!-- 有下面這行router-view才能顯示路徑下的頁面 -->
+  <div class="container-fluid">
+    <router-view />
+  </div>
 </template>
 
 <script>
