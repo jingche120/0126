@@ -36,7 +36,7 @@
           <div class="btn-group">
             <button class="btn btn-outline-primary btn-sm"
             @click="openModal(false, item)">編輯</button>
-            <button class="btn btn-outline-danger btn-sm">刪除</button>
+            <button class="btn btn-outline-danger btn-sm" @click="delProduct(item)">刪除</button>
           </div>
         </td>
       </tr>
@@ -104,6 +104,13 @@ export default {
       this.isNew = isNew; // 把openModal的isNew值，儲存到this.isNew
       const productComponent = this.$refs.productModal;
       productComponent.showModal();
+    },
+    delProduct(item) {
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
+      this.$http.delete(api).then((res) => {
+        console.log(res.data);
+        this.getProducts();// 在後端刪除後，要重新抓一次資料
+      });
     },
   },
   created() {
