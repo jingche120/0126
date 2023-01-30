@@ -215,6 +215,10 @@ export default {
   watch: {
     product() {
       this.tempProduct = this.product;
+      // 多圖範例
+      if (!this.tempProduct.images) {
+        this.tempProduct.images = [];
+      }
     },
   },
   data() {
@@ -229,6 +233,19 @@ export default {
     },
     hideModal() {
       this.modal.hide();// 隱藏在畫面上
+    },
+    uploadFile() { // 上傳圖片
+      // console.dir(uploadFile);所需要上傳的資料在files屬性內
+      const uploadedFile = this.$refs.fileInput.files[0];
+      const formData = new FormData();// 因為上傳圖片的api要求是以Form的形式上傳
+      formData.append('file-to-upload', uploadedFile);
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/upload`;
+      this.$http.post(url, formData).then((res) => {
+        console.log(res.data);
+        if (res.data.success) {
+          this.tempProduct.imageUrl = res.data.imageUrl;
+        }
+      });
     },
   },
   mounted() {

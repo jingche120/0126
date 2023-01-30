@@ -1,7 +1,7 @@
 <template>
   <div class="text-end">
     <!-- 因為是呼叫函式，所以要有() -->
-    <button class="btn btn-primary" type="button" @click="openModal">
+    <button class="btn btn-primary" type="button" @click="openModal(true)">
       增加一個產品
     </button>
   </div>
@@ -34,7 +34,8 @@
         </td>
         <td>
           <div class="btn-group">
-            <button class="btn btn-outline-primary btn-sm">編輯</button>
+            <button class="btn btn-outline-primary btn-sm"
+            @click="openModal(false, item)">編輯</button>
             <button class="btn btn-outline-danger btn-sm">刪除</button>
           </div>
         </td>
@@ -59,6 +60,7 @@ export default {
       products: [], // 所有產列表
       pagination: {}, // 換頁時所要的產品資料
       tempProduct: {}, // 要傳送到內層(ProductModal)的產品資料
+      isNew: false, // isNew用來判斷是新增(true)還是編輯(false)
     };
   },
   methods: {
@@ -71,18 +73,35 @@ export default {
         this.pagination = res.data.pagination;
       });
     },
+    // 當在表單(modal)中新增或修改，都會觸發updateProduct()函式
     updateProduct(item) {
       this.tempProduct = item;
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
+      // 新增
+      let api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
+      let httpMethod = 'post';
+
+      // 修改
+      if (this.isNew === false) {
+        // /api/:api_path/admin/product/:id
+        api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
+        httpMethod = 'put';
+      }
       const productComponent = this.$refs.productModal;
-      this.$http.post(api, { data: this.tempProduct }).then((response) => {
+      this.$http[httpMethod](api, { data: this.tempProduct }).then((response) => {
         console.log(response);
         productComponent.hideModal();
         this.getProducts();
       });
     },
-    openModal() {
-      this.tempProduct = {};
+    openModal(isNew, item) {
+      // 新增
+      if (isNew === true) {
+        this.tempProduct = {};
+      } else {
+      // 修改
+        this.tempProduct = { ...item };// 深層拷貝，複製一份，不會互相影響
+      }
+      this.isNew = isNew; // 把openModal的isNew值，儲存到this.isNew
       const productComponent = this.$refs.productModal;
       productComponent.showModal();
     },
