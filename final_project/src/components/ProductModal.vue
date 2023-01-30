@@ -201,7 +201,7 @@
   </div>
 </template>
 <script>
-import Modal from 'bootstrap/js/dist/modal';
+import modalMixin from '@/mixins/modalMixin';
 
 export default {
   // props適用物件的方式接收
@@ -228,12 +228,6 @@ export default {
     };
   },
   methods: {
-    showModal() {
-      this.modal.show(); // 呈現在畫面上
-    },
-    hideModal() {
-      this.modal.hide();// 隱藏在畫面上
-    },
     uploadFile() { // 上傳圖片
       // console.dir(uploadFile);所需要上傳的資料在files屬性內
       const uploadedFile = this.$refs.fileInput.files[0];
@@ -248,9 +242,6 @@ export default {
       });
     },
   },
-  mounted() {
-    // 把Modal實體化
-    this.modal = new Modal(this.$refs.modal);// 用this.$refs.modal引用ref.modal
-  },
+  mixins: [modalMixin],
 };
 </script>
