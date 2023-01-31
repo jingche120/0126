@@ -234,7 +234,9 @@ export default {
       const formData = new FormData();// 因為上傳圖片的api要求是以Form的形式上傳
       formData.append('file-to-upload', uploadedFile);
       const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/upload`;
+      this.isLoading = true;
       this.$http.post(url, formData).then((res) => {
+        this.isLoading = false;
         console.log(res.data);
         if (res.data.success) {
           this.tempProduct.imageUrl = res.data.imageUrl;

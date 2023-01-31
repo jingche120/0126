@@ -1,4 +1,6 @@
 <template>
+  <!-- props :active=isLoading" 前內後外 -->
+  <LoadingComponents :active="isLoading"></LoadingComponents>
   <div class="text-end">
     <!-- 因為是呼叫函式，所以要有() -->
     <button class="btn btn-primary" type="button" @click="openModal(true)">
@@ -56,6 +58,7 @@
 <script>
 import ProductModal from '../components/ProductModal.vue';
 import DelModal from '../components/DelModal.vue';
+// 用mitt來做跨元件間溝通
 
 export default {
   data() {
@@ -64,16 +67,20 @@ export default {
       pagination: {}, // 換頁時所要的產品資料
       tempProduct: {}, // 要傳送到內層(ProductModal)的產品資料
       isNew: false, // isNew用來判斷是新增(true)還是編輯(false)
+      isLoading: false, // 載入時的緩衝圈圈，預設是false
     };
   },
   methods: {
     // 取得所有商品的列表
     getProducts() {
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products`;
-      this.$http.get(api).then((res) => {
-        console.log(res);
-        this.products = res.data.products;
-        this.pagination = res.data.pagination;
+      this.isLoading = true;
+      this.$http.get(api).then((response) => {
+        // 從遠端取得資料了
+        this.isLoading = false;
+        console.log(response);
+        this.products = response.data.products;
+        this.pagination = response.data.pagination;
       });
     },
     // 當在表單(modal)中新增或修改，都會觸發updateProduct()函式
@@ -90,10 +97,24 @@ export default {
         httpMethod = 'put';
       }
       const productComponent = this.$refs.productModal;
+      this.isLoading = true;
       this.$http[httpMethod](api, { data: this.tempProduct }).then((response) => {
+        this.isLoading = false;
         console.log(response);
         productComponent.hideModal();
-        this.getProducts();
+        if (response.data.success) {
+          this.getProducts();
+          this.emitter.emit('push-message', {
+            style: 'success',
+            title: '更新成功',
+          });
+        } else {
+          this.emitter.emit('push-message', {
+            style: 'danger',
+            title: '更新失敗',
+            content: response.data.message.join(','),
+          });
+        }
       });
     },
     openModal(isNew, item) {
@@ -116,7 +137,9 @@ export default {
     },
     delProduct() {
       const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${this.tempProduct.id}`;
+      this.isLoading = true;
       this.$http.delete(url).then((response) => {
+        this.isLoading = false;
         console.log(response.data);
         const delComponent = this.$refs.delModal;
         delComponent.hideModal();
@@ -130,5 +153,7 @@ export default {
   components: {
     ProductModal, DelModal,
   },
+  // 用inject讀入外層給內層用的東西
+  inject: ['emitter'],
 };
 </script>
