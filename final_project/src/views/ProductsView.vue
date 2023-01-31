@@ -1,6 +1,7 @@
 <template>
   <!-- props :active=isLoading" 前內後外 -->
   <LoadingComponents :active="isLoading"></LoadingComponents>
+
   <div class="text-end">
     <!-- 因為是呼叫函式，所以要有() -->
     <button class="btn btn-primary" type="button" @click="openModal(true)">
@@ -52,10 +53,14 @@
 <ProductModal ref="productModal"
   :product="tempProduct"
   @update-product="updateProduct"></ProductModal>
+<!-- @emit-pages="getProducts" emit事件，由內層向外層傳送 -->
+<!-- :pages="pagination" props事件，由外層向內層傳送 -->
+<PaginationComponents @emit-pages="getProducts" :pages="pagination"></PaginationComponents>
 <DelModal :item="tempProduct" ref="delModal" @del-item="delProduct"/>
 </template>
 
 <script>
+import PaginationComponents from '@/components/PaginationComponents.vue';
 import ProductModal from '../components/ProductModal.vue';
 import DelModal from '../components/DelModal.vue';
 // 用mitt來做跨元件間溝通
@@ -72,8 +77,9 @@ export default {
   },
   methods: {
     // 取得所有商品的列表
-    getProducts() {
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products`;
+    getProducts(page = 1) {
+      console.log('page', page);
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products?page=${page}`;
       this.isLoading = true;
       this.$http.get(api).then((response) => {
         // 從遠端取得資料了
@@ -151,7 +157,9 @@ export default {
     this.getProducts();
   },
   components: {
-    ProductModal, DelModal,
+    ProductModal,
+    DelModal,
+    PaginationComponents,
   },
   // 用inject讀入外層給內層用的東西
   inject: ['emitter'],
