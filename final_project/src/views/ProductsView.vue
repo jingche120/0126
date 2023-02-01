@@ -25,14 +25,14 @@
         <td>{{ item.category }}</td>
         <td>{{ item.title }}</td>
         <td class="text-right">
-          {{ $filter.currency(item.origin_price) }}
+          {{ $filters.currency(item.origin_price) }}
         </td>
         <td class="text-right">
-          {{ $filter.currency(item.price) }}
+          {{ $filters.currency(item.price) }}
         </td>
         <td>
           <!-- 如果屬性is_enable為true，則是啟用狀態;如果屬性is_enable為false，則是未啟用狀態 -->
-          <span class="text-success" v-if="item.is_enable">啟用</span>
+          <span class="text-success" v-if="item.is_enabled">啟用</span>
           <span class="text-danger" v-else>未啟用</span>
         </td>
         <td>
@@ -80,7 +80,6 @@ export default {
   methods: {
     // 取得所有商品的列表
     getProducts(page = 1) {
-      console.log('page', page);
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products?page=${page}`;
       this.isLoading = true;
       this.$http.get(api).then((response) => {
@@ -93,6 +92,7 @@ export default {
     },
     // 當在表單(modal)中新增或修改，都會觸發updateProduct()函式
     updateProduct(item) {
+      console.log(item);
       this.tempProduct = item;
       // 新增
       let api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
@@ -108,7 +108,7 @@ export default {
       this.isLoading = true;
       this.$http[httpMethod](api, { data: this.tempProduct }).then((response) => {
         this.isLoading = false;
-        console.log(response);
+        // console.log(response);
         productComponent.hideModal();// 已經修改完了，把modal關掉(隱藏)
         if (response.data.success) {
           this.getProducts();

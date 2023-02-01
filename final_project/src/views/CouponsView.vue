@@ -1,70 +1,130 @@
 <template>
-    <!-- props :active=isLoading" 前內後外 -->
-    <LoadingComponents :active="isLoading"></LoadingComponents>
+  <div>
+    <Loading :active="isLoading"></Loading>
+    <div class="text-end mt-4">
+      <button class="btn btn-primary" @click="openCouponModal(true)">
+        建立新的優惠券
+      </button>
+    </div>
     <table class="table mt-4">
       <thead>
-        <tr>
-          <th>名稱</th>
-          <th>折扣百分比</th>
-          <th>到期日</th>
-          <th>是否啟用</th>
-          <th>編輯</th>
-        </tr>
+      <tr>
+        <th>名稱</th>
+        <th>折扣百分比</th>
+        <th>到期日</th>
+        <th>是否啟用</th>
+        <th>編輯</th>
+      </tr>
       </thead>
-      <tbody v-for="item in coupons" :key="item.id">
-      <!-- 每次建立一個for迴圈時，就需要有一個專屬的key值 -->
-        <tr>
-          <td>{{ item.name }}</td><!--折價券名稱-->
-          <td>{{ item.discount }}</td><!--折扣比例-->
-          <td>{{ item.deadline }}</td><!--到期日-->
-          <td>
-            <!-- 如果屬性is_enable為true，則是啟用狀態;如果屬性is_enable為false，則是未啟用狀態 -->
-            <span class="text-success" v-if="item.is_enable">啟用</span>
-            <span class="text-danger" v-else>不啟用</span>
-          </td>
-          <td>
-            <div class="btn-group">
-              <button class="btn btn-outline-primary btn-sm"
-              @click="openModal(false, item)">編輯</button>
-              <button class="btn btn-outline-danger btn-sm"
-              @click="openDelProductModal(item)">刪除</button>
-            </div>
-          </td>
-        </tr>
+      <tbody>
+      <tr v-for="(item, key) in coupons" :key="key">
+        <td>{{ item.title }}</td>
+        <td>{{ item.percent }}%</td>
+        <td>{{ $filters.date(item.due_date) }}</td>
+        <td>
+          <span v-if="item.is_enabled === 1" class="text-success">啟用</span>
+          <span v-else class="text-muted">未起用</span>
+        </td>
+        <td>
+          <div class="btn-group">
+            <button class="btn btn-outline-primary btn-sm"
+                    @click="openCouponModal(false, item)"
+            >編輯</button>
+            <button class="btn btn-outline-danger btn-sm"
+                    @click="openDelCouponModal(item)"
+            >刪除</button>
+          </div>
+        </td>
+      </tr>
       </tbody>
     </table>
-  <!-- ref=productModal，讓這個ProductModal可以被別人呼叫
-  :product="temProduct" [往內層傳送]前(內)層(props中的變數名稱)內後(此)外(ProductsView此層的變數)
-  @update-product="updateProduct" [往內層向外傳送]前(內)層($emit的變數名稱)內後外(要觸發此層的哪個函式)
-  -->
-  <ProductModal ref="productModal"
-    :product="tempProduct"
-    @update-product="updateProduct"></ProductModal>
-  <!-- @emit-pages="getProducts" emit事件，由內層向外層傳送 -->
-  <!-- :pages="pagination" props事件，由外層向內層傳送 -->
-  <PaginationComponents @emit-pages="getProducts" :pages="pagination"></PaginationComponents>
-  <DelModal :item="tempProduct" ref="delModal" @del-item="delProduct"/>
-  </template>
+    <couponModal :coupon="tempCoupon" ref="couponModal"
+    @update-coupon="updateCoupon"/>
+    <DelModal :item="tempCoupon" ref="delModal" @del-item="delCoupon"/>
+  </div>
+</template>
 
 <script>
+import CouponModal from '@/components/CouponModal.vue';
+import DelModal from '@/components/DelModal.vue';
+
 export default {
+  components: { CouponModal, DelModal },
+  props: {
+    config: Object,
+  },
   data() {
     return {
-      coupons: [ // 所有折價券
-        {
-          name: 'good', // 折價券名稱
-          discount: 50, // 折扣比例
-          deadline: '2023/2/10', // 到期日
-          is_enable: true, // 是否啟用
-        },
-        {
-          name: 'birthday', // 折價券名稱
-          discount: 10, // 折扣比例
-          deadline: '2023/2/31', // 到期日
-          is_enable: false, // 是否啟用
-        },
-      ],
+      coupons: {},
+      tempCoupon: {
+        title: '',
+        is_enabled: 0,
+        percent: 100,
+        code: '',
+      },
+      isLoading: false,
+      isNew: false,
     };
+  },
+  methods: {
+    openCouponModal(isNew, item) {
+      this.isNew = isNew;
+      if (this.isNew) {
+        this.tempCoupon = {
+          due_date: new Date().getTime() / 1000,
+        };
+      } else {
+        this.tempCoupon = { ...item };
+      }
+      this.$refs.couponModal.showModal();
+    },
+    openDelCouponModal(item) {
+      this.tempCoupon = { ...item };
+      const delComponent = this.$refs.delModal;
+      delComponent.showModal();
+    },
+    getCoupons() {
+      this.isLoading = true;
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupons`;
+      this.$http.get(url, this.tempProduct).then((response) => {
+        this.coupons = response.data.coupons;
+        this.isLoading = false;
+        console.log(response);
+      });
+    },
+    updateCoupon(tempCoupon) {
+      if (this.isNew) {
+        const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupon`;
+        this.$http.post(url, { data: tempCoupon }).then((response) => {
+          console.log(response, tempCoupon);
+          this.$httpMessageState(response, '新增優惠券');
+          this.getCoupons();
+          this.$refs.couponModal.hideModal();
+        });
+      } else {
+        const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupon/${this.tempCoupon.id}`;
+        this.$http.put(url, { data: this.tempCoupon }).then((response) => {
+          console.log(response);
+          this.$httpMessageState(response, '新增優惠券');
+          this.getCoupons();
+          this.$refs.couponModal.hideModal();
+        });
+      }
+    },
+    delCoupon() {
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/coupon/${this.tempCoupon.id}`;
+      this.isLoading = true;
+      this.$http.delete(url).then((response) => {
+        console.log(response, this.tempCoupon);
+        this.$httpMessageState(response, '刪除優惠券');
+        const delComponent = this.$refs.delModal;
+        delComponent.hideModal();
+        this.getCoupons();
+      });
+    },
+  },
+  created() {
+    this.getCoupons();
   },
 };
 </script>

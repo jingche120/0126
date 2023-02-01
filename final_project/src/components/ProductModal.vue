@@ -14,6 +14,7 @@
           <h5 class="modal-title" id="exampleModalLabel">
             <span>新增產品</span>
           </h5>
+          <!-- 下面的btn為右邊的X鈕 -->
           <button
             type="button"
             class="btn-close"

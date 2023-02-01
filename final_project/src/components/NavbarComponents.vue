@@ -1,27 +1,19 @@
 <!-- 把Navbar獨立成一元件 -->
 <template>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">作品</a>
         <button class="navbar-toggler" type="button"
-        data-toggle="collapse" data-target="#navbarText"
-            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarText">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#/dashboard/products">產品</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#/dashboard/orders">訂單</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#/dashboard/coupons">優惠券</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" @click.prevent="logout">登出</a>
-                </li>
-            </ul>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <router-link to="/dashboard/products" class="nav-link">產品</router-link>
+              <router-link to="/dashboard/orders" class="nav-link">訂單</router-link>
+              <router-link to="/dashboard/coupons" class="nav-link">優惠券</router-link>
+              <a href="#" @click.prevent="logout" class="nav-link">登出</a>
+            </div>
         </div>
     </nav>
 </template>
