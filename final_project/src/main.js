@@ -10,6 +10,7 @@ import { currency } from './methods/filter';
 // 因為要加入.use(axuios)，所以要把這行改掉
 // createApp(App).use(router).mount('#app');
 const app = createApp(App);
+// 用全域變數的方式加入千分號
 app.config.globalProperties.$filter = { currency };
 app.use(router);
 app.use(VueAxios, axios);

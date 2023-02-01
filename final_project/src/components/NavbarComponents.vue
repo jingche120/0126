@@ -1,7 +1,7 @@
 <!-- 把Navbar獨立成一元件 -->
 <template>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Navbar w/ text</a>
+        <a class="navbar-brand" href="#">作品</a>
         <button class="navbar-toggler" type="button"
         data-toggle="collapse" data-target="#navbarText"
             aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -10,18 +10,18 @@
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="#/dashboard/products">產品</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Features</a>
+                    <a class="nav-link" href="#/dashboard/orders">訂單</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#/dashboard/coupons">優惠券</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#" @click.prevent="logout">登出</a>
                 </li>
             </ul>
-            <span class="navbar-text">
-                Navbar text with an inline element
-            </span>
         </div>
     </nav>
 </template>

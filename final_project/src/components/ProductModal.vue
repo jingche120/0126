@@ -17,6 +17,7 @@
           <button
             type="button"
             class="btn-close"
+            @click="$emit('cancel-modal')"
           ></button>
         </div>
         <div class="modal-body">

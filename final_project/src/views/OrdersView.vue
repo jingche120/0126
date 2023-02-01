@@ -5,7 +5,7 @@
   <div class="text-end">
     <!-- 因為是呼叫函式，所以要有() -->
     <button class="btn btn-primary" type="button" @click="openModal(true)">
-      增加一個產品
+      新增訂單
     </button>
   </div>
   <table class="table mt-4">
@@ -50,11 +50,11 @@
 :product="temProduct" [往內層傳送]前(內)層(props中的變數名稱)內後(此)外(ProductsView此層的變數)
 @update-product="updateProduct" [往內層向外傳送]前(內)層($emit的變數名稱)內後外(要觸發此層的哪個函式)
 -->
-<ProductModal ref="productModal"
+<OrderModal ref="orderModal"
   :product="tempProduct"
   @update-product="updateProduct"
   @cancel-modal="cancelModal"
-  ></ProductModal>
+  ></OrderModal>
 <!-- @emit-pages="getProducts" emit事件，由內層向外層傳送 -->
 <!-- :pages="pagination" props事件，由外層向內層傳送 -->
 <PaginationComponents @emit-pages="getProducts" :pages="pagination"></PaginationComponents>
@@ -63,7 +63,7 @@
 
 <script>
 import PaginationComponents from '@/components/PaginationComponents.vue';
-import ProductModal from '../components/ProductModal.vue';
+import OrderModal from '../components/OrderModal.vue';
 import DelModal from '../components/DelModal.vue';
 // 用mitt來做跨元件間溝通
 
@@ -104,12 +104,12 @@ export default {
         api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
         httpMethod = 'put';
       }
-      const productComponent = this.$refs.productModal;
+      const OrderComponent = this.$refs.orderModal;
       this.isLoading = true;
       this.$http[httpMethod](api, { data: this.tempProduct }).then((response) => {
         this.isLoading = false;
         console.log(response);
-        productComponent.hideModal();// 已經修改完了，把modal關掉(隱藏)
+        OrderComponent.hideModal();
         if (response.data.success) {
           this.getProducts();
           this.emitter.emit('push-message', {
@@ -134,8 +134,8 @@ export default {
         this.tempProduct = { ...item };// 深層拷貝，複製一份，不會互相影響
       }
       this.isNew = isNew; // 把openModal的isNew值，儲存到this.isNew
-      const productComponent = this.$refs.productModal;
-      productComponent.showModal();// 要新增資料，所以把modal叫出來
+      const OrderComponent = this.$refs.orderModal;
+      OrderComponent.showModal();// 要新增資料，所以把modal叫出來
     },
     // 開啟刪除 Modal
     openDelProductModal(item) {
@@ -156,15 +156,15 @@ export default {
     },
     // 當按下modal鐘右上方的X，則會關閉modal視窗
     cancelModal() {
-      const productComponent = this.$refs.productModal;
-      productComponent.hideModal();
+      const orderComponent = this.$refs.orderModal;
+      orderComponent.hideModal();
     },
   },
   created() {
     this.getProducts();
   },
   components: {
-    ProductModal,
+    OrderModal,
     DelModal,
     PaginationComponents,
   },
