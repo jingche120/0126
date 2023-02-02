@@ -23,7 +23,7 @@ export default {
     this.isLoading = true;
     this.$http.defaults.headers.common.Authorization = token;
     this.isLoading = false;
-    // 將帶有token的資料用api傳出去
+    // 將帶有token的資料用api傳出去，檢查是否允許登入
     const api = `${process.env.VUE_APP_API}api/user/check`;
     // 為甚麼讀的到this.user
     this.isLoading = true;

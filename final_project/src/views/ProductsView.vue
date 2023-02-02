@@ -70,7 +70,7 @@ import DelModal from '../components/DelModal.vue';
 export default {
   data() {
     return {
-      products: [], // 所有產列表
+      products: [], // 所有產品列表
       pagination: {}, // 換頁時所要的產品資料
       tempProduct: {}, // 要傳送到內層(ProductModal)的產品資料
       isNew: false, // isNew用來判斷是新增(true)還是編輯(false)

@@ -1,6 +1,7 @@
 <template>
 <!-- 建立ProductModal，即彈出視窗 -->
-<!-- modal，且用ref屬性(modal)，讓之後可以即接用this.$refs.modal來呼叫 -->  <div
+<!-- modal，且用ref屬性(modal)，讓之後可以即接用this.$refs.modal來呼叫 -->
+  <div
     class="modal fade"
     id="exampleModal"
     tabindex="-1"

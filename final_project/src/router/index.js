@@ -39,6 +39,23 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/user',
+    name: 'user',
+    component: () => import('../views/UserBoardView.vue'),
+    children: [
+      {
+        // 購物車(商品列表放這)
+        path: 'cart',
+        component: () => import('../views/UserCartView.vue'),
+      },
+      {
+        // 單項產品的頁面
+        path: 'product/:productId', // 動態路由
+        component: () => import('../views/UserProductView.vue'),
+      },
+    ],
+  },
 ];
 const router = createRouter({
   history: createWebHashHistory(),

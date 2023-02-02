@@ -2,7 +2,7 @@
 <!-- ToastMessageComponents 是吐司列表 -->
 <template>
     <!-- 定位 -->
-    <div class="toast-container position-absolute pe-3 top-0 end-0">
+    <div class="toast-container position-absolute pe-3 top-0 end-0" style="z-index: 1050">
     <!-- 用列表的方式呈現 -->
     <Toast v-for="(msg,key) in message" :key="key" :msg="msg"></Toast>
     </div>
