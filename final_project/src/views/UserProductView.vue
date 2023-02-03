@@ -62,6 +62,7 @@ export default {
         this.$httpMessageState(response, '加入購物車');
         // 如果成功加入購物車，則轉至清單的畫面(user/cart)
         // 加入path就不會路徑搞錯，path可以從頭弄
+
         this.$router.push({ path: '/user/cart' });
       });
     },

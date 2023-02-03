@@ -33,7 +33,20 @@
               <div class="btn-group btn-group-sm">
                 <button type="button" class="btn btn-outline-secondary"
                 @click="getProduct(item.id)">查看更多</button>
-                <button type="button" class="btn btn-outline-danger">加入購物車</button>
+                <!-- : 為用vue來操控標籤屬性 -->
+                <!-- 當this.status.loadingItem === item.id時，把此按鈕隱藏起來-->
+                <button type="button" class="btn btn-outline-danger"
+                :disabled="this.status.loadingItem === item.id" @click="addCart(item.id)">
+                  <!-- 如果有點擊，才會觸發圈圈 -->
+                  <div v-if="this.status.loadingItem == item.id"
+                  class="spinner-grow spinner-grow-sm text-danger" role="status"
+                  >
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  加入購物車
+                </button>
+                <!-- <div> {{ item.id }}</div>
+                <div v-if="this.status.loadingItem === item.id">測試{{}}</div> -->
               </div>
             </td>
           </tbody>
@@ -52,8 +65,10 @@ export default {
     return {
       products: [], // 所有產品列表
       product: {}, // 分頁資訊
+      // isLoading 這個由全域變數宣告的緩衝，是在載入頁面的時候會觸發的緩衝，整個頁面都會是轉圈圈
       status: {
-        loadingItem: '', // 判斷是否要轉圈圈的狀態
+        // (loadingItem)是當使用者按下新增事購物車的時候，為了防止使用者以為還沒好，然後重複點擊，所以在還沒傳到後端前，這個按鈕都會是disabled
+        loadingItem: '',
       },
     };
   },
@@ -75,6 +90,23 @@ export default {
     // getProduct()取得單一商品資訊，動態路由
     getProduct(id) {
       this.$router.push(`/user/product/${id}`); // 父節點路徑開始算
+    },
+    // 加入購物車
+    addCart(id) {
+      // 觸發loadingItem，當點下加入購物車的時候，loadingItem為此產品的id，執行完才會變空值
+      // 當button判斷到loadingItem為此產品的id，則disabled
+      this.status.loadingItem = id;
+      console.log('id', id);
+      // console.log('loadingItem', `${this.status.loadingItem === id}`);
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
+      const cart = {
+        product_id: id,
+        qty: 1,
+      };
+      this.$http.post(api, { data: cart }).then((response) => {
+        console.log(response);
+        this.status.loadingItem = '';
+      });
     },
   },
   created() {
