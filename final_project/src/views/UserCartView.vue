@@ -15,40 +15,42 @@
             </tr>
           </thead>
           <tbody>
-            <td style="width: 200px">
-              <div style="height: 100px; background-size: cover; background-position: center">
-                <img width="120" :src= "item.imageUrl" alt="404" />
-              </div>
-            </td>
-            <td><a href="#" class="text-dark">{{ item.title }}</a></td>
-            <td>
-              <!-- 如果沒有特價，則顯示原價(origin_price) -->
-              <div class="h5" v-if="!item.price">{{ item.origin_price }} 元</div>
-              <div class="h6" v-if="item.price">原價 {{ item.origin_price }} 元</div>
-              <div class="h5" v-if="item.price">現在只要 {{ item.origin_price }} 元</div>
-            </td>
-            <!-- 查看更多 & 放到購物車 -->
-            <td>
-              <!-- btn-group-sm 就連最小螢幕size(sm)，也要執行這行 -->
-              <div class="btn-group btn-group-sm">
-                <button type="button" class="btn btn-outline-secondary"
-                @click="getProduct(item.id)">查看更多</button>
-                <!-- : 為用vue來操控標籤屬性 -->
-                <!-- 當this.status.loadingItem === item.id時，把此按鈕隱藏起來-->
-                <button type="button" class="btn btn-outline-danger"
-                :disabled="this.status.loadingItem === item.id" @click="addCart(item.id)">
-                  <!-- 如果有點擊，才會觸發圈圈 -->
-                  <div v-if="this.status.loadingItem == item.id"
-                  class="spinner-grow spinner-grow-sm text-danger" role="status"
-                  >
-                    <span class="visually-hidden">Loading...</span>
-                  </div>
-                  加入購物車
-                </button>
-                <!-- <div> {{ item.id }}</div>
-                <div v-if="this.status.loadingItem === item.id">測試{{}}</div> -->
-              </div>
-            </td>
+            <tr v-for="item in products" :key="item.id">
+              <td style="width: 200px">
+                <div style="height: 100px; background-size: cover; background-position: center">
+                  <img width="120" :src= "item.imageUrl" alt="404" />
+                </div>
+              </td>
+              <td><a href="#" class="text-dark">{{ item.title }}</a></td>
+              <td>
+                <!-- 如果沒有特價，則顯示原價(origin_price) -->
+                <div class="h5" v-if="!item.price">{{ item.origin_price }} 元</div>
+                <div class="h6" v-if="item.price">原價 {{ item.origin_price }} 元</div>
+                <div class="h5" v-if="item.price">現在只要 {{ item.origin_price }} 元</div>
+              </td>
+              <!-- 查看更多 & 放到購物車 -->
+              <td>
+                <!-- btn-group-sm 就連最小螢幕size(sm)，也要執行這行 -->
+                <div class="btn-group btn-group-sm">
+                  <button type="button" class="btn btn-outline-secondary"
+                  @click="getProduct(item.id)">查看更多</button>
+                  <!-- : 為用vue來操控標籤屬性 -->
+                  <!-- 當this.status.loadingItem === item.id時，把此按鈕隱藏起來-->
+                  <button type="button" class="btn btn-outline-danger"
+                  :disabled="this.status.loadingItem === item.id" @click="addCart(item.id)">
+                    <!-- 如果有點擊，才會觸發圈圈 -->
+                    <div v-if="this.status.loadingItem == item.id"
+                    class="spinner-grow spinner-grow-sm text-danger" role="status"
+                    >
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                    加入購物車
+                  </button>
+                  <!-- <div> {{ item.id }}</div>
+                  <div v-if="this.status.loadingItem === item.id">測試{{}}</div> -->
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -66,12 +68,12 @@
             </thead>
             <tbody>
             <template v-if="cart.carts">
-              <tr v-for="item in cart.carts" :key="'cartList_' + item.id">
+              <tr v-for="item in cart.carts" :key="item.id">
                 <td>
                   <!-- 刪除的垃圾桶icon -->
                   <button type="button" class="btn btn-outline-danger btn-sm"
                           :disabled="status.loadingItem === item.id"
-                          @click="removeCartItem(item.id)">
+                          @click="removeCartItem(item)">
                     <i class="bi bi-x"></i>
                   </button>
                 </td>
@@ -88,7 +90,7 @@
                     <label class="input-group-text" :for="item+'qty'">
                       <input type="number" class="form-control" :id="item+'qty'"
                       v-model.number="item.qty" min="1"
-                      :disabled="this.status.loadingItem === item.id" @change="updateCart(item)">
+                      :disabled="item.id === this.status.loadingItem" @change="updateCart(item)">
                     / {{ item.product.unit }}
                     </label>
                   </div>
@@ -152,8 +154,7 @@ export default {
       this.isLoading = true;
       this.$http.get(api).then((response) => {
         // 從遠端取得資料了，可以把緩衝的圈圈關掉
-        this.isLoading = false;
-        console.log('response', response.data);
+        console.log('product', response.data);
         // 把資料存在此檔案
         this.products = response.data.products;// 把產品存下來
         this.isLoading = false;// 把分頁資訊存在來
@@ -169,10 +170,9 @@ export default {
     addCart(id) {
       // 觸發loadingItem，當點下加入購物車的時候，loadingItem為此產品的id，執行完才會變空值
       // 當button判斷到loadingItem為此產品的id，則disabled
-      this.status.loadingItem = id;
-      console.log('id', id);
       // console.log('loadingItem', `${this.status.loadingItem === id}`);
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
+      this.status.loadingItem = id;
       const cart = {
         product_id: id,
         qty: 1,
@@ -181,7 +181,6 @@ export default {
         console.log('addCart', response);
         this.status.loadingItem = '';
       });
-      this.getCart();
     },
 
     // 取得購物車清單 /api/:api_path/cart
@@ -203,7 +202,6 @@ export default {
     updateCart(item) {
       const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart/${item.id}`;
       const list = { product_id: item.product_id, qty: item.qty };
-      console.log('1231', item);
       this.status.loadingItem = item.id;
       this.$http.put(url, { data: list }).then((response) => {
         console.log('更新購物車清單', response);
@@ -212,8 +210,8 @@ export default {
       });
     },
     // 刪除某一筆購物車資料，會帶入購物車內該產品的id
-    removeCartItem(itemId) {
-      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart/${itemId}`;
+    removeCartItem(item) {
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart/${item.id}`;
       this.isLoading = true;
       this.$http.delete(url).then((response) => {
         console.log(response);
