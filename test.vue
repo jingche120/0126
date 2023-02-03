@@ -1,4 +1,4 @@
-<!-- 購物車，所有產品也放這 -->
+購物車，所有產品也放這
 <template>
   <!-- 因為適用到vue，所以active前面需要:，也因為Loading是宣告在全域，所以可以直接用 -->
   <LoadingComponents :active="isLoading"></LoadingComponents>
@@ -116,13 +116,11 @@
           <div class="input-group mb-3 input-group-sm">
             <label class="input-group-append" :for="item+'coupon'">
             <input type="text" v-model="coupon_code" placeholder="請輸入優惠碼" :id="item+'coupon'"
-            class="form-control" />
+            class="form-control">
+              <button class="btn btn-outline-secondary" type="button" @click="addCouponCode">
+                套用優惠碼
+              </button>
             </label>
-            <!-- 若this.status.loadingItem  != '' 代表剛有點"套用優惠碼"，但後端還沒上傳完成 -->
-            <button type="button" @click="addCouponCode" :disabled="this.status.loadingItem != ''"
-            class="btn btn-outline-secondary">
-              套用優惠碼
-            </button>
           </div>
         </div>
       </div>
@@ -182,9 +180,7 @@ export default {
       this.$http.post(api, { data: cart }).then((response) => {
         console.log('addCart', response);
         this.status.loadingItem = '';
-        this.getCart(); // 如果放在外面，axios還沒回傳時就會先往下執行(也就抓不到最新的)
       });
-      // this.getCart(); axios 會抓不到
     },
 
     // 取得購物車清單 /api/:api_path/cart
@@ -215,28 +211,12 @@ export default {
     },
     // 刪除某一筆購物車資料，會帶入購物車內該產品的id
     removeCartItem(item) {
-      this.status.loadingItem = item.id;
-      this.isLoading = true;
       const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart/${item.id}`;
+      this.isLoading = true;
       this.$http.delete(url).then((response) => {
-        console.log('移除購物車品項', response);
+        console.log(response);
         this.getCart();
-        this.status.loadingItem = '';
         this.isLoading = false;
-      });
-    },
-    // 新增優惠碼折扣
-    addCouponCode() {
-      console.log('查詢是否有優惠碼', this.coupon_code);
-      // 按下套用優惠碼後，等axios前，都不能點此btn
-      this.status.loadingItem = this.coupon_code;
-      const couponCode = { code: this.coupon_code };
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/coupon`;
-      this.$http.post(api, { data: couponCode }).then((response) => {
-        this.$httpMessageState(response, '加入優惠券');
-        console.log('新增優惠碼折扣', response);
-        this.getCart();
-        this.status.loadingItem = '';
       });
     },
   },
