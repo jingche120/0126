@@ -7,6 +7,8 @@ import App from './App.vue';
 import router from './router';
 import { currency, date } from './methods/filters';
 import $httpMessageState from './methods/pushMessageState';
+// 載入bootstrap-icons套件，之後直接用<i class="bi bi-trash-fill"></i>即可
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 // 因為要加入.use(axuios)，所以要把這行改掉
 // createApp(App).use(router).mount('#app');

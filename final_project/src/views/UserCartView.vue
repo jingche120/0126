@@ -52,6 +52,34 @@
           </tbody>
         </table>
       </div>
+      <div class="col-md-5">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>
+              </th>
+              <th>品名</th>
+              <th>數量</th>
+              <th>單價</th>
+              <th></th>
+            </tr>
+          </thead>
+          <template v-for="list in cartList.carts" :key="list" >
+            <tbody class="mb-3">
+              <td>
+                <button type="button" class="btn btn-outline-danger mt-3 btn-sm">
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+              </td>
+              <td  class="mb-3">{{ list.product.title }}</td>
+              <td  class="mb-3">{{ list.qty }}</td>
+              <td v-if="list.product.price"  class="mb-3">{{ list.product.price }}</td>
+              <td v-else  class="mb-3">{{ list.product.origin_price }}</td>
+            </tbody>
+            <hr>
+          </template>
+          </table>
+        </div>
     </div>
   </div>
 </template>
@@ -70,6 +98,7 @@ export default {
         // (loadingItem)是當使用者按下新增事購物車的時候，為了防止使用者以為還沒好，然後重複點擊，所以在還沒傳到後端前，這個按鈕都會是disabled
         loadingItem: '',
       },
+      cartList: {}, // 購物車清單列表
     };
   },
   methods: {
@@ -108,10 +137,20 @@ export default {
         this.status.loadingItem = '';
       });
     },
+    // 購物車清單 /api/:api_path/cart
+    getCart() {
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
+      this.$http.get(api).then((response) => {
+        console.log('購物車清單', response);
+        this.cartList = response.data.data;
+        console.log('購物車清單data', this.cartList);
+      });
+    },
   },
   created() {
     // 因為客戶不用驗證，所以一進來就是商品列表
     this.getProducts();
+    this.getCart();
   },
   components: {
   },
