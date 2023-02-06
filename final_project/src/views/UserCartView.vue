@@ -5,7 +5,7 @@
   <div class="container">
     <div class="row mt-4">
       <div class="col-md-7">
-        <table class="table align-middle" v-for="item in products" :key="item.id">
+        <table class="table align-middle">
           <thead>
             <tr>
               <th>圖片</th>
@@ -17,7 +17,7 @@
           <tbody>
             <tr v-for="item in products" :key="item.id">
               <td style="width: 200px">
-                <div style="height: 100px; background-size: cover; background-position: center">
+                <div style="background-size: cover; background-position: center">
                   <img width="120" :src= "item.imageUrl" alt="404" />
                 </div>
               </td>
@@ -127,6 +127,21 @@
         </div>
       </div>
     </div>
+    <div class="my-5 row justify-content-center">
+      <label for="email" class="form-label">
+        <FormComponent class="col-md-6" v-slot="{ error }"
+        @submit="createOrder">
+          <div class="mb-3">
+            Email
+              <FieldComponent id="email" name="email" type="email" class="form-control"
+                :class="{ 'is-invalid': error['email'] }" placeholder="請輸入email"
+                rules="email|required" v-model="form.user.email" />
+          </div>
+        </FormComponent>
+      </label>
+    </div>
+    <hr />
+
   </div>
 </template>
 
@@ -137,15 +152,22 @@ import emitter from '@/methods/emitter';
 export default {
   data() {
     return {
-      products: [], // 所有產品列表
-      product: {}, // 分頁資訊
+      products: [],
+      product: {},
       // isLoading 這個由全域變數宣告的緩衝，是在載入頁面的時候會觸發的緩衝，整個頁面都會是轉圈圈
       status: {
         // (loadingItem)是當使用者按下新增事購物車的時候，為了防止使用者以為還沒好，然後重複點擊，所以在還沒傳到後端前，這個按鈕都會是disabled
         loadingItem: '',
       },
-      cart: {}, // 購物車清單列表
+      cart: {},
       coupon_code: '',
+      form: {
+        user: {
+          email: '',
+        },
+        message: {
+        },
+      },
     };
   },
   methods: {
@@ -158,16 +180,14 @@ export default {
         // 從遠端取得資料了，可以把緩衝的圈圈關掉
         console.log('product', response.data);
         // 把資料存在此檔案
-        this.products = response.data.products;// 把產品存下來
-        this.isLoading = false;// 把分頁資訊存在來
+        this.products = response.data.products; // 把產品存下來
+        this.isLoading = false; // 把分頁資訊存在來
       });
     },
-
     // getProduct()取得單一商品資訊，動態路由
     getProduct(id) {
       this.$router.push(`/user/product/${id}`); // 父節點路徑開始算
     },
-
     // 加入購物車，要重新觸發一次取得購物車列表
     addCart(id) {
       // 觸發loadingItem，當點下加入購物車的時候，loadingItem為此產品的id，執行完才會變空值
@@ -184,9 +204,8 @@ export default {
         this.status.loadingItem = '';
         this.getCart(); // 如果放在外面，axios還沒回傳時就會先往下執行(也就抓不到最新的)
       });
-      // this.getCart(); axios 會抓不到
+      // 在這寫this.getCart(); axios 會抓不到
     },
-
     // 取得購物車清單 /api/:api_path/cart
     getCart() {
       const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
@@ -197,7 +216,6 @@ export default {
         this.isLoading = false;
       });
     },
-
     // 更新購物車清單
     // 因為API會要該產品的id和該產品的數量，所以帶入該產品的所有資訊
     // 當還沒更新完時，該btn disabled(不顯示)
@@ -236,8 +254,12 @@ export default {
         this.$httpMessageState(response, '加入優惠券');
         console.log('新增優惠碼折扣', response);
         this.getCart();
-        this.status.loadingItem = '';
+        this.status.loadingItem = '""';
       });
+    },
+    // 表單提交鈕
+    onSubmit() {
+      console.log(this.user);
     },
   },
   created() {
