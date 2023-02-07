@@ -128,20 +128,60 @@
       </div>
     </div>
     <div class="my-5 row justify-content-center">
-      <label for="email" class="form-label">
-        <FormComponent class="col-md-6" v-slot="{ error }"
+      <FormComponent class="col-md-6" v-slot="{ errors }"
         @submit="createOrder">
-          <div class="mb-3">
-            Email
-              <FieldComponent id="email" name="email" type="email" class="form-control"
-                :class="{ 'is-invalid': error['email'] }" placeholder="請輸入email"
-                rules="email|required" v-model="form.user.email" />
-          </div>
+        <div class="mb-3">
+          <span for="email" class="form-label">Email
+            <FieldComponent id="email" name="email" type="email" class="form-control"
+                    :class="{ 'is-invalid': errors['email'] }"
+                    placeholder="請輸入 Email" rules="email|required"
+                    v-model="form.user.email"></FieldComponent>
+          </span>
+          <ErrorMessageComponent name="email" class="invalid-feedback"></ErrorMessageComponent>
+        </div>
+
+        <div class="mb-3">
+          <span for="name" class="form-label">收件人姓名
+          <FieldComponent id="name" name="姓名" type="text" class="form-control"
+          :class="{ 'is-invalid': errors['姓名'] }"
+          placeholder="請輸入姓名" rules="required"
+          v-model="form.user.name"></FieldComponent>
+          </span>
+          <ErrorMessageComponent name="姓名" class="invalid-feedback"></ErrorMessageComponent>
+        </div>
+
+        <div class="mb-3">
+          <span for="tel" class="form-label">收件人電話
+            <FieldComponent id="tel" name="電話" type="tel" class="form-control"
+                    :class="{ 'is-invalid': errors['電話'] }"
+                    placeholder="請輸入電話" rules="required"
+                    v-model="form.user.tel"></FieldComponent>
+          <ErrorMessageComponent name="電話" class="invalid-feedback"></ErrorMessageComponent>
+        </span>
+        </div>
+
+        <div class="mb-3">
+          <span for="address" class="form-label">收件人地址
+          <FieldComponent id="address" name="地址" type="text" class="form-control"
+                   :class="{ 'is-invalid': errors['地址'] }"
+                   placeholder="請輸入地址" rules="required"
+                   v-model="form.user.address"></FieldComponent>
+          <ErrorMessageComponent name="地址" class="invalid-feedback"></ErrorMessageComponent>
+          </span>
+        </div>
+
+        <div class="mb-3">
+          <label for="message" class="form-label">留言
+          <textarea name="" id="message" class="form-control" cols="30" rows="10"
+                    v-model="form.message"></textarea>
+          </label>
+        </div>
+        <div class="text-end">
+          <button class="btn btn-danger">送出訂單</button>
+        </div>
         </FormComponent>
-      </label>
     </div>
     <hr />
-
   </div>
 </template>
 
@@ -163,10 +203,12 @@ export default {
       coupon_code: '',
       form: {
         user: {
+          name: '',
           email: '',
+          tel: '',
+          address: '',
         },
-        message: {
-        },
+        message: '',
       },
     };
   },
@@ -211,7 +253,7 @@ export default {
       const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
       this.isLoading = true;
       this.$http.get(url).then((response) => {
-        console.log(response);
+        console.log('取得購物車清單', response);
         this.cart = response.data.data;
         this.isLoading = false;
       });
@@ -254,12 +296,19 @@ export default {
         this.$httpMessageState(response, '加入優惠券');
         console.log('新增優惠碼折扣', response);
         this.getCart();
-        this.status.loadingItem = '""';
+        this.status.loadingItem = '';
       });
     },
-    // 表單提交鈕
-    onSubmit() {
-      console.log(this.user);
+    // createOrder 點擊"送出訂單"
+    createOrder() {
+      const order = this.form; // 把表單的資料存起來
+      console.log(order);
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/order`;
+      this.$http.post(api, { data: order }).then((res) => {
+        console.log('RES', res.data.orderId);
+        // const orderId = res.data.orderId;
+        this.$router.push(`/user/checkout/${res.data.orderId}`);
+      });
     },
   },
   created() {

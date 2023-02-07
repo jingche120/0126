@@ -54,6 +54,11 @@ const routes = [
         path: 'product/:productId', // 動態路由
         component: () => import('../views/UserProductView.vue'),
       },
+      {
+        // 客戶按結帳後，所導到的畫面
+        path: 'checkout/:orderId',
+        component: () => import('../views/UserCheckoutView.vue'),
+      },
     ],
   },
 ];

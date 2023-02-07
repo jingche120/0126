@@ -5,6 +5,10 @@ import {
 } from 'vee-validate';
 // 匯入VeeValidate(表單驗證)所有規則
 import AllRules from '@vee-validate/rules';
+// 匯入VeeValidate語系
+import { localize, setLocale } from '@vee-validate/i18n';
+// 匯入中文
+import zhTW from '@vee-validate/i18n/dist/locale/zh_TW.json';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 import Loading from 'vue3-loading-overlay';
@@ -36,10 +40,14 @@ Object.keys(AllRules).forEach((rule) => {
   defineRule(rule, AllRules[rule]);
   // console.log('rule', rule);
 });
-// VeeValidate(表單驗證)一輸入即驗證
+
 configure({
-  validateOnInput: true,
+  validateOnInput: true, // VeeValidate(表單驗證)一輸入即驗證
+  // 產生(generate)中文消息語言環境生成器,localize本地化
+  generateMessage: localize({ zh_TW: zhTW }),
 });
+// 設定預設語系
+setLocale('zh_TW');
 app.component('FormComponent', Form);
 app.component('FieldComponent', Field);
 app.component('ErrorMessageComponent', ErrorMessage);
