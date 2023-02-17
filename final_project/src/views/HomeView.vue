@@ -1,18 +1,94 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <div class="col-8">
+          <a class="navbar-brand" href="#">
+            <img src="@/pic/soluation.png" alt="soulation" />
+          </a>
+        </div>
+        <div class="col-4">
+          <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ">
+              <li class="nav-item">
+                <a class="nav-link active fs-3 text-end" href="#">首頁</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link fs-3 text-end" href="#">產品列表</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link fs-3 text-end">關於我們</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link fs-3 text-end">聯絡我們</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <!--一行黑(折價優惠)黑底白字   -->
+    <div class="row text-white bg-dark" style="display: flex;
+    flex-direction: column;justify-content: center;border: 1px solid #ccc;
+    text-align: center;height: 50px;">
+      開幕週年慶，輸入優惠碼"Good"，及享9折優惠!
+    </div>
+    <div class="row">
+      <div id="myCarousel" class="carousel slide">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="@/pic/VastSurshop-1.png" class="d-block w-100" alt="...">
+          </div>
+          <div class="carousel-item">
+            <img src="@/pic/VastSurfshop-2.png" class="d-block" alt="...">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button"
+        data-bs-target="#carouselExample" data-bs-slide="prev" @click="previous">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button"
+        data-bs-target="#carouselExample" data-bs-slide="next" @click="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+    <!-- 立即選購 -->
+    <div class="row">
+      <div class="d-grid gap-2 col-2 mx-auto vh-20">
+        <button class="btn btn-primary" type="button">Button</button>
+      </div>
+    </div>
+    <div class="row">
+
+    </div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
+import Carousel from 'bootstrap/js/dist/carousel';
 
+// @ is an alias to /src
 export default {
-  name: 'HomeView',
-  components: {
-    HelloWorld,
+  data() {
+    return {
+    };
+  },
+  methods: {
+    carousel() {
+      this.carouselMethod.cycle();
+      console.log('hi');
+    },
+  },
+  mounted() {
+    const myCarousel = document.querySelector('#myCarousel');
+    this.carouselMethod = new Carousel(myCarousel, {
+      interval: 2000, // 切換時間
+      wrap: true, // 連播是否繼續
+    });
+    this.carousel();
   },
 };
 </script>
