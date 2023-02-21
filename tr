@@ -1,6 +1,23 @@
 <template>
   <div class="index">
-    <NavbarOfSoul></NavbarOfSoul>
+    <!-- navbar navbar-expand-md navbar-light bg-primary sticky-top -->
+    <!-- .navbar-expand{-sm|-md|-lg|-xl|-xxl} 確認內容何時可以收起來 -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+      <div class="container"><a aria-current="page" href="#/"
+          class="active router-link-exact-active navbar-brand custom-navbar-brand">
+          <h1 class="logo">靈魂所在</h1>
+        </a><button class="navbar-toggler ms-auto collapsed" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+          aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a href="#/" class="nav-link">新手須知</a></li>
+            <li class="nav-item"><a href="#/" class="nav-link">優惠活動</a></li>
+            <li class="nav-item"><a href="#/" class="nav-link">聯絡我們</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
     <div class="home">
       <div class="main">
         <!-- 衝浪板跟鞋子旋轉木馬 -->
@@ -23,7 +40,7 @@
             class="anniversary container py-5 my-sm-5 d-flex flex-column justyfy-content-center align-items-center">
             <h3 class="anniversary-title fs-1 fw-bold text-center mb-4"> 一週年慶祝活動 </h3>
             <p class="fs-5 text-center text-muted"> 慶祝靈魂所在一週年，現在進入到活動頁面參加活動，就有機會得到優惠碼！ </p>
-            <a href="#/discount" class="btn btn-primary btn-lg">進入活動頁面</a>
+            <a href="#/anniversary" class="btn btn-primary btn-lg">進入活動頁面</a>
           </section>
 
           <!-- 衝浪板介紹 -->
@@ -167,24 +184,19 @@
                   </div>
                 </div>
               </div>
+
             </div>
           </section>
           <!-- 測試 -->
         </div>
       </div> <!-- main的div-->
 
-      <FooterComponents></FooterComponents>
     </div>
   </div>
 </template>
 
 <script>
-// 引入bootstrap的旋轉木馬
 import Carousel from 'bootstrap/js/dist/carousel';
-// 引入靈魂所在購物網的navbar
-import NavbarOfSoul from '@/components/NavbarOfSoul.vue';
-// 引入靈魂所在購物網的footer
-import FooterComponents from '@/components/FooterComponents.vue';
 
 // @ is an alias to /src
 export default {
@@ -205,10 +217,6 @@ export default {
       wrap: true, // 連播是否繼續
     });
     this.carousel();
-  },
-  components: {
-    NavbarOfSoul,
-    FooterComponents,
   },
 };
 </script>

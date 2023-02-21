@@ -1,11 +1,7 @@
 <!-- 用戶端的首頁 -->
 <template>
-  <!-- 因為跟後台的導覽列(NavbarComponents)不一樣，所以重寫一個 -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <router-link class="navbar-brand" to="/user/cart">用戶端範例</router-link>
-    </div>
-  </nav>
+  <!-- 用靈魂所在購物網的navbar -->
+  <NavbarOfSoul></NavbarOfSoul>
   <div class="container-fluid mt-3 position-relative">
     <ToastMessageComponents></ToastMessageComponents>
     <!-- router-view會顯示子路由下的東西 -->
@@ -19,6 +15,8 @@
 import emitter from '@/methods/emitter';
 // 引入吐司(提示區塊)
 import ToastMessageComponents from '@/components/ToastMessageComponents.vue';
+// 引入靈魂所在購物網的navbar
+import NavbarOfSoul from '@/components/NavbarOfSoul.vue';
 
 export default {
   data() {
@@ -31,6 +29,7 @@ export default {
   },
   components: {
     ToastMessageComponents,
+    NavbarOfSoul,
   },
   provide() {
     return {
