@@ -241,6 +241,7 @@ export default {
         product_id: id,
         qty: 1,
       };
+      console.log('cart', cart);
       this.$http.post(api, { data: cart }).then((response) => {
         console.log('addCart', response);
         this.status.loadingItem = '';

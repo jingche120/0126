@@ -66,6 +66,8 @@
           <section class="newArrivals feature bg-light py-5">
             <div class="container py-md-5">
               <h3 class="align-items-center fs-1">新品上市</h3>
+
+              <!-- 第一個產品 -->
               <div class="product row row-cols-1 row-cols-md-2">
                 <div class="col position-relative product-img-back">
                   <div class="img-front ratio ratio-4x3 overflow-hidden"><img class="img-cover"
@@ -86,14 +88,13 @@
                     <p class="fs-3 fw-bold"><span class="fs-6 text-muted fw-normal me-2"><del>NTD 35000</del></span> NTD
                       32,900</p>
                     <ul class="list-unstyled d-flex flex-wrap justify-content-center mb-0">
-                      <li><a class="product-link" href="#"><i class="bi bi-journal-text"></i>
+                      <li><a class="product-link" href="#/user/product/-NOo9r8W72llUfhNRaVX"><i class="bi bi-journal-text"></i>
                           查看詳細 </a></li>
-                      <li><a class="product-link" href="#"><i class="bi bi-bag-plus"></i>
-                          加入購物車 </a></li>
                     </ul>
                   </div>
                 </div>
               </div>
+              <!-- 第二個產品 -->
               <div class="product row row-cols-1 row-cols-md-2">
                 <div class="col position-relative product-img-back">
                   <div class="img-front ratio ratio-4x3 overflow-hidden"><img class="img-cover"
@@ -109,10 +110,8 @@
                     <p class="fs-3 fw-bold"><span class="fs-6 text-muted fw-normal me-2"><del>NTD 35,000</del></span> NTD
                       32,900</p>
                     <ul class="list-unstyled d-flex flex-wrap justify-content-center mb-0">
-                      <li><a class="product-link" href="#"><i class="bi bi-journal-text"></i>
+                      <li><a class="product-link" href="#/user/product/-NOoBWaHRmpBUWev39L9"><i class="bi bi-journal-text"></i>
                           查看詳細 </a></li>
-                      <li><a class="product-link" href="#"><i class="bi bi-bag-plus"></i>
-                          加入購物車 </a></li>
                     </ul>
                   </div>
                 </div>
@@ -134,10 +133,8 @@
                     <p class="fs-3 fw-bold"><span class="fs-6 text-muted fw-normal me-2"><del>NTD 1,500</del></span> NTD
                       1,200</p>
                     <ul class="list-unstyled d-flex flex-wrap justify-content-center mb-0">
-                      <li><a class="product-link" href="#"><i class="bi bi-journal-text"></i>
+                      <li><a class="product-link" href="#/user/product/-NOoBgfgryZqwan8cuSO"><i class="bi bi-journal-text"></i>
                           查看詳細 </a></li>
-                      <li><a class="product-link" href="#"><i class="bi bi-bag-plus"></i>
-                          加入購物車 </a></li>
                     </ul>
                   </div>
                 </div>
@@ -159,10 +156,10 @@
                     <p class="fs-3 fw-bold"><span class="fs-6 text-muted fw-normal me-2"><del>NTD 1,500</del></span> NTD
                       1,200</p>
                     <ul class="list-unstyled d-flex flex-wrap justify-content-center mb-0">
-                      <li><a class="product-link" href="#"><i class="bi bi-journal-text"></i>
+                      <li><a class="product-link" href="#/user/product/-NOoC084o4dI3BsE4ayz"><i class="bi bi-journal-text"></i>
                           查看詳細 </a></li>
-                      <li><a class="product-link" href="#"><i class="bi bi-bag-plus"></i>
-                          加入購物車 </a></li>
+                      <li>
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -190,12 +187,32 @@ import FooterComponents from '@/components/FooterComponents.vue';
 export default {
   data() {
     return {
+      navbarcolor: true,
+      status: {
+        // (loadingItem)是當使用者按下新增事購物車的時候，為了防止使用者以為還沒好，然後重複點擊，所以在還沒傳到後端前，這個按鈕都會是disabled
+        loadingItem: '',
+      },
     };
   },
   methods: {
     carousel() {
       this.carouselMethod.cycle();
       console.log('hi');
+    },
+    productTocart(id) {
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
+      const cart = {
+        product_id: id,
+        qty: 1,
+      };
+      console.log(cart);
+      this.$http.post(api, { data: cart }).then((response) => {
+        console.log(response);
+      });
+    },
+    // getProduct()取得單一商品資訊，動態路由
+    getProduct(id) {
+      this.$router.push(`/user/product/${id}`); // 父節點路徑開始算
     },
   },
   mounted() {
@@ -204,7 +221,6 @@ export default {
       interval: 2000, // 切換時間
       wrap: true, // 連播是否繼續
     });
-    this.carousel();
   },
   components: {
     NavbarOfSoul,
